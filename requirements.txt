@@ -1,0 +1,6 @@
+torch
+torchvision
+tqdm
+astroNN
+numpy
+opencv-python
