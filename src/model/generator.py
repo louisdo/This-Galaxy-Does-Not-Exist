@@ -1,10 +1,16 @@
+import torch.nn as nn
+
 class Generator(nn.Module):
-    def __init__(self,number_channel = 3, image_size = 64, ngpu = False):
+    def __init__(self, 
+                 latent_dim = 128,
+                 number_channel = 3, 
+                 image_size = 64, 
+                 ngpu = False):
         super(Generator, self).__init__()
         self.ngpu = ngpu
         self.main = nn.Sequential(
             # input is Z, going into a convolution
-            nn.ConvTranspose2d( number_channel, image_size * 8, 4, 1, 0, bias=False),
+            nn.ConvTranspose2d(latent_dim, image_size * 8, 4, 1, 0, bias=False),
             nn.BatchNorm2d(image_size * 8),
             nn.ReLU(True),
             # state size. (image_size*8) x 4 x 4
@@ -20,14 +26,14 @@ class Generator(nn.Module):
             nn.BatchNorm2d(image_size),
             nn.ReLU(True),
             # state size. (image_size) x 32 x 32
-            nn.ConvTranspose2d( image_size, nc, 4, 2, 1, bias=False),
+            nn.ConvTranspose2d( image_size, number_channel, 4, 2, 1, bias=False),
             nn.Tanh()
             # state size. (nc) x 64 x 64
         )
 
-    def forward(self, input):
-        if input.is_cuda and self.ngpu > 1:
-            output = nn.parallel.data_parallel(self.main, input, range(self.ngpu))
+    def forward(self, inp):
+        if inp.is_cuda and self.ngpu > 1:
+            output = nn.parallel.data_parallel(self.main, inp, range(self.ngpu))
         else:
-            output = self.main(input)
+            output = self.main(inp)
         return output.view(-1,1).squeeze(1)

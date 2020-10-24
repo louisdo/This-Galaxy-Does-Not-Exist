@@ -7,7 +7,7 @@ from astroNN.datasets import galaxy10
 from torchvision import transforms
 
 
-class GalaxyLoader(Dataset):
+class Galaxy10Dataset(Dataset):
     def __init__(self, imsize: int = 64) -> None:
         # This will download the data at the first time being run
         images, labels = galaxy10.load_data()

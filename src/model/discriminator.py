@@ -1,5 +1,10 @@
+import torch.nn as nn
+
 class Discriminator(nn.Module):
-    def __init__(self, number_channel=3, image_size=64,ngpu = False):
+    def __init__(self, 
+                 number_channel=3, 
+                 image_size=64,
+                 ngpu = False):
         super(Discriminator, self).__init__()
         self.ngpu = ngpu
         self.main = nn.Sequential(
@@ -23,10 +28,10 @@ class Discriminator(nn.Module):
             nn.Sigmoid()
         )
 
-    def forward(self, input):
-        if input.is_cuda and self.ngpu > 1:
-            output = nn.parallel.data_parallel(self.main, input, range(self.ngpu))
+    def forward(self, inp):
+        if inp.is_cuda and self.ngpu > 1:
+            output = nn.parallel.data_parallel(self.main, inp, range(self.ngpu))
         else:
-            output = self.main(input)
+            output = self.main(inp)
 
         return output.view(-1, 1).squeeze(1)
