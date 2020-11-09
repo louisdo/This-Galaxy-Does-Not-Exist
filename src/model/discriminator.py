@@ -34,4 +34,4 @@ class Discriminator(nn.Module):
         else:
             output = self.main(inp)
 
-        return output.view(-1, 1).squeeze(1)
+        return output

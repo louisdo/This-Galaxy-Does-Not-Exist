@@ -42,7 +42,7 @@ class ModelTrainer:
                                                     lr=self.CONFIG["learning_rate"], 
                                                     betas=(0.5, 0.999))
 
-        self.fixed_noise = torch.randn(64, self.CONFIG["latent_dim"], 1, 1, device = self.device)
+        self.fixed_noise = torch.randn(1, self.CONFIG["latent_dim"], 1, 1, device = self.device)
 
         self.image_list = []
 
@@ -107,6 +107,9 @@ class ModelTrainer:
             # generator
             noise = torch.randn(images.size(0), latent_dim, 1, 1).float().to(self.device)
             generated_images = self.generator(noise)
+
+            assert images.shape == generated_images.shape, "generated images and images must be of the same shape"
+            assert labels.shape == fake_labels.shape, "labels and fake labels must be of the same shape"
 
             # The first part is to update the discriminator
             averaged_discriminator_loss = self._update_discriminator(images = images,

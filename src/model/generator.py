@@ -36,4 +36,4 @@ class Generator(nn.Module):
             output = nn.parallel.data_parallel(self.main, inp, range(self.ngpu))
         else:
             output = self.main(inp)
-        return output.view(-1,1).squeeze(1)
+        return output
