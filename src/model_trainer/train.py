@@ -128,7 +128,7 @@ class ModelTrainer:
             })
 
 
-            if batch_index != 0 and batch_index % eval_interval:
+            if batch_index != 0 and batch_index % eval_interval == 0:
                 self._save_generator_output()
 
 
