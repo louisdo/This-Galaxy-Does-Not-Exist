@@ -89,7 +89,7 @@ class ModelTrainer:
     def _save_generator_output(self):
         with torch.no_grad():
             generated = self.generator(self.fixed_noise).detach().cpu()
-        self.image_list.append(torchvision.utils.make_grid(generated, padding=2, normalize=True))
+        self.image_list.append(generated)
 
 
     def train_one_epoch(self, epoch: int):
