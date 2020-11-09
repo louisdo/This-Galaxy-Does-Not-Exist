@@ -12,15 +12,18 @@ class ModelTrainer:
     def __init__(self, 
                  CONFIG: dict):
         self.CONFIG = CONFIG["train"]
+        self.device = self.CONFIG["device"]
 
         self.discriminator = Discriminator(number_channel = 3,
                                            image_size = self.CONFIG["image_size"],
                                            ngpu = False)
+        self.discriminator = self.discriminator.to(self.device)
 
         self.generator = Generator(latent_dim = self.CONFIG["latent_dim"],
                                    number_channel = 3,
                                    image_size = self.CONFIG["image_size"],
                                    ngpu = False)
+        self.generator = self.generator.to(self.device)
 
         dataset = Galaxy10Dataset(imsize = self.CONFIG["image_size"])
 
@@ -28,8 +31,6 @@ class ModelTrainer:
                                                       batch_size = self.CONFIG["batch_size"],
                                                       shuffle = True, 
                                                       num_workers = self.CONFIG["workers"])
-
-        self.device = self.CONFIG["device"]
 
         self.criterion = torch.nn.BCELoss()
 
