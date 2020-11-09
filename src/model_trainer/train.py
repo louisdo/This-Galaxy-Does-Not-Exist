@@ -99,13 +99,13 @@ class ModelTrainer:
         train_progress_bar = tqdm(self.dataloader, desc = f"Epoch {epoch}")
 
         for batch_index, images in enumerate(train_progress_bar):
-            images = images.to(self.device)
-            labels = torch.ones((images.size(0), )).to(self.device)
-            fake_labels = torch.zeros((images.size(0), )).to(self.device)
+            images = images.float().to(self.device)
+            labels = torch.ones((images.size(0), )).float().to(self.device)
+            fake_labels = torch.zeros((images.size(0), )).float().to(self.device)
 
             # randomly generate noise, this will be the input of the
             # generator
-            noise = torch.randn(images.size(0), latent_dim, 1, 1).to(self.device)
+            noise = torch.randn(images.size(0), latent_dim, 1, 1).float().to(self.device)
             generated_images = self.generator(noise)
 
             # The first part is to update the discriminator
