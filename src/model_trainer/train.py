@@ -12,7 +12,7 @@ class ModelTrainer:
     def __init__(self, 
                  CONFIG: dict):
         self.CONFIG = CONFIG["train"]
-        self.device = self.CONFIG["device"]
+        self.device = torch.device(self.CONFIG["device"])
 
         self.discriminator = Discriminator(number_channel = 3,
                                            image_size = self.CONFIG["image_size"],
@@ -100,12 +100,12 @@ class ModelTrainer:
 
         for batch_index, images in enumerate(train_progress_bar):
             images = images.to(self.device)
-            labels = torch.ones((images.size(0), ), device = self.device)
-            fake_labels = torch.zeros((images.size(0), ), device = self.device)
+            labels = torch.ones((images.size(0), )).to(self.device)
+            fake_labels = torch.zeros((images.size(0), )).to(self.device)
 
             # randomly generate noise, this will be the input of the
             # generator
-            noise = torch.randn(images.size(0), latent_dim, 1, 1, device = self.device)
+            noise = torch.randn(images.size(0), latent_dim, 1, 1).to(self.device)
             generated_images = self.generator(noise)
 
             # The first part is to update the discriminator
