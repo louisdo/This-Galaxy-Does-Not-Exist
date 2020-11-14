@@ -17,12 +17,14 @@ class ModelTrainer:
         self.discriminator = Discriminator(number_channel = 3,
                                            image_size = self.CONFIG["image_size"],
                                            ngpu = False)
+        self.discriminator.apply(self.weights_init)
         self.discriminator = self.discriminator.to(self.device)
 
         self.generator = Generator(latent_dim = self.CONFIG["latent_dim"],
                                    number_channel = 3,
                                    image_size = self.CONFIG["image_size"],
                                    ngpu = False)
+        self.generator.apply(self.weights_init)
         self.generator = self.generator.to(self.device)
 
         dataset = Galaxy10Dataset(imsize = self.CONFIG["image_size"])
@@ -36,15 +38,26 @@ class ModelTrainer:
 
         self.discriminator_optimizer = torch.optim.Adam(self.discriminator.parameters(), 
                                                         lr=self.CONFIG["learning_rate"], 
-                                                        betas=(0.5, 0.999))
+                                                        betas=(0.5, 0.999),
+                                                        weight_decay = self.CONFIG["weight_decay"])
 
         self.generator_optimizer = torch.optim.Adam(self.generator.parameters(), 
                                                     lr=self.CONFIG["learning_rate"], 
-                                                    betas=(0.5, 0.999))
+                                                    betas=(0.5, 0.999),
+                                                    weight_decay = self.CONFIG["weight_decay"])
 
         self.fixed_noise = torch.randn(1, self.CONFIG["latent_dim"], 1, 1, device = self.device)
 
         self.image_list = []
+    
+    @staticmethod
+    def weights_init(m):
+        classname = m.__class__.__name__
+        if classname.find('Conv') != -1:
+            nn.init.normal_(m.weight.data, 0.0, 0.02)
+        elif classname.find('BatchNorm') != -1:
+            nn.init.normal_(m.weight.data, 1.0, 0.02)
+            nn.init.constant_(m.bias.data, 0)
 
     def _update_discriminator(self, 
                               images: torch.tensor,
