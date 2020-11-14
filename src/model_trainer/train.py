@@ -47,54 +47,6 @@ class ModelTrainer:
         self.fixed_noise = torch.randn(1, self.CONFIG["latent_dim"], 1, 1, device = self.device)
 
         self.image_list = []
-    
-    @staticmethod
-    def weights_init(m):
-        classname = m.__class__.__name__
-        if classname.find('Conv') != -1:
-            torch.nn.init.normal_(m.weight.data, 0.0, 0.02)
-        elif classname.find('BatchNorm') != -1:
-            torch.nn.init.normal_(m.weight.data, 1.0, 0.02)
-            torch.nn.init.constant_(m.bias.data, 0)
-
-    def _update_discriminator(self, 
-                              images: torch.tensor,
-                              generated_images: torch.tensor, 
-                              labels: torch.tensor, 
-                              fake_labels: torch.tensor):
-        # input images into discriminator, the discriminator is
-        # expected to classify all those images as real
-        self.discriminator.zero_grad()
-        discriminator_output = self.discriminator(images).view(-1)
-
-        discriminator_loss = self.criterion(discriminator_output, labels)
-        discriminator_loss.backward()
-
-        discriminator_output_for_fake_images = self.discriminator(generated_images.detach()).view(-1)
-
-        discriminator_loss_for_fake_images = self.criterion(discriminator_output_for_fake_images, fake_labels)
-        discriminator_loss_for_fake_images.backward()
-
-        total_loss = discriminator_loss + discriminator_loss_for_fake_images
-        averaged_discriminator_loss = total_loss.mean().item()
-        self.discriminator_optimizer.step()
-
-        return averaged_discriminator_loss
-
-
-    def _update_generator(self, 
-                          generated_images: torch.tensor, 
-                          labels: torch.tensor):
-        self.generator.zero_grad()
-        discriminator_loss_for_fake_images = self.discriminator(generated_images).view(-1)
-
-        # this means the generator should generate images that can fool the discriminator
-        generator_loss = self.criterion(discriminator_loss_for_fake_images, labels)
-        averaged_generator_loss = generator_loss.mean().item()
-        generator_loss.backward()
-        self.generator_optimizer.step()
-
-        return averaged_generator_loss
 
 
     def _save_generator_output(self):
