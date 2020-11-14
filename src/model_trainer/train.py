@@ -125,19 +125,35 @@ class ModelTrainer:
             assert labels.shape == fake_labels.shape, "labels and fake labels must be of the same shape"
 
             # The first part is to update the discriminator
-            averaged_discriminator_loss = self._update_discriminator(images = images,
-                                                                     generated_images = generated_images,
-                                                                     labels = labels,
-                                                                     fake_labels = fake_labels)
+            self.discriminator.zero_grad()
+            discriminator_output = self.discriminator(images).view(-1)
+
+            discriminator_loss = self.criterion(discriminator_output, labels)
+            discriminator_loss.backward()
+
+            discriminator_output_for_fake_images = self.discriminator(generated_images.detach()).view(-1)
+
+            discriminator_loss_for_fake_images = self.criterion(discriminator_output_for_fake_images, fake_labels)
+            discriminator_loss_for_fake_images.backward()
+
+            total_loss = discriminator_loss + discriminator_loss_for_fake_images
+            averaged_discriminator_loss = total_loss.mean().item()
+            self.discriminator_optimizer.step()
 
             # The second part is to update the generator
-            averaged_generator_loss = self._update_generator(generated_images = generated_images,
-                                                             labels = labels)
+            self.generator.zero_grad()
+            discriminator_loss_for_fake_images = self.discriminator(generated_images).view(-1)
+
+            # this means the generator should generate images that can fool the discriminator
+            generator_loss = self.criterion(discriminator_loss_for_fake_images, labels)
+            averaged_generator_loss = generator_loss.mean().item()
+            generator_loss.backward()
+            self.generator_optimizer.step()
 
             # update the training progress bar
             train_progress_bar.set_postfix({
                 "Generator loss": averaged_generator_loss,
-                "Discriminator_loss": averaged_discriminator_loss
+                "Discriminator loss": averaged_discriminator_loss
             })
 
 
