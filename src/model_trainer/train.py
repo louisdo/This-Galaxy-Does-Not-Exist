@@ -17,14 +17,14 @@ class ModelTrainer:
         self.discriminator = Discriminator(number_channel = 3,
                                            image_size = self.CONFIG["image_size"],
                                            ngpu = False)
-        self.discriminator.apply(self.weights_init)
+
         self.discriminator = self.discriminator.to(self.device)
 
         self.generator = Generator(latent_dim = self.CONFIG["latent_dim"],
                                    number_channel = 3,
                                    image_size = self.CONFIG["image_size"],
                                    ngpu = False)
-        self.generator.apply(self.weights_init)
+
         self.generator = self.generator.to(self.device)
 
         dataset = Galaxy10Dataset(imsize = self.CONFIG["image_size"])
@@ -38,13 +38,11 @@ class ModelTrainer:
 
         self.discriminator_optimizer = torch.optim.Adam(self.discriminator.parameters(), 
                                                         lr=self.CONFIG["learning_rate"], 
-                                                        betas=(0.5, 0.999),
-                                                        weight_decay = self.CONFIG["weight_decay"])
+                                                        betas=(0.5, 0.999))
 
         self.generator_optimizer = torch.optim.Adam(self.generator.parameters(), 
                                                     lr=self.CONFIG["learning_rate"], 
-                                                    betas=(0.5, 0.999),
-                                                    weight_decay = self.CONFIG["weight_decay"])
+                                                    betas=(0.5, 0.999))
 
         self.fixed_noise = torch.randn(1, self.CONFIG["latent_dim"], 1, 1, device = self.device)
 
