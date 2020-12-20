@@ -1,11 +1,12 @@
 import torch, torchvision
-import logging, time, sys
+import logging, time, sys, os
 sys.path.append("../..")
 from loader import Galaxy10Dataset
 from src.model.discriminator import Discriminator
 from src.model.generator import Generator
 from utils.utils import Utils
 from tqdm import tqdm
+from PIL import Image
 
 
 class ModelTrainer:
@@ -123,6 +124,15 @@ class ModelTrainer:
         training_end_time = time.time()
         logging.info(f"The training procedure took {(training_end_time - training_start_time) / 60} minutes")
 
+    def save_result_for_eval(self, num_infer, where_to):
+        for index in range(num_infer):
+            with torch.no_grad():
+                noise = torch.randn(1, self.CONFIG["latent_dim"], 1, 1, device = self.device)
+                generated = self.generator(noise).detach().cpu()
+                generated = torchvision.utils.make_grid(generated, padding=2, normalize=True)
+                generated = generated.permute(1, 2, 0).data.numpy()
+            im = Image.fromarray(generated)
+            im.save(os.path.join(where_to, f"fake_{index}.jpg"))
 
 
 

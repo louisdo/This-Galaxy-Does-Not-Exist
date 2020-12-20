@@ -10,17 +10,15 @@ from torchvision import transforms
 class Galaxy10Dataset(Dataset):
     def __init__(self, imsize: int = 64) -> None:
         # This will download the data at the first time being run
-        images, labels = galaxy10.load_data()
+        images, _ = galaxy10.load_data()
 
         images = images.astype(np.float32)
-
-        self.images = self._resize_array_of_images(images, (imsize, imsize, 3))
-        self.labels = labels
 
         # The mean and std is from imagenet
         mean = [123.675, 116.28 , 103.53]
         std = [58.395, 57.12 , 57.375]
-        self.transform = transforms.Compose([transforms.ToTensor(),
+        self.transform = transforms.Compose([transforms.Resize(imsize),
+                                             transforms.ToTensor(),
                                              transforms.Normalize(mean=mean, std=std)])
 
 
