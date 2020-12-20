@@ -47,6 +47,8 @@ class EvalDataset(Dataset):
         if mode == "PIL": return pil_image
         else: return np.array(pil_image)
 
+    def __len__(self):
+      return len(self.data)
 
     def __getitem__(self, index):
         img_path = self.data.path.loc[index]

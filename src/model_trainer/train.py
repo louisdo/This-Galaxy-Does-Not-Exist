@@ -62,7 +62,7 @@ class ModelTrainer:
         latent_dim = self.CONFIG["latent_dim"]
         eval_interval = self.CONFIG["eval_interval"]
 
-        train_progress_bar = tqdm(self.dataloader, desc = f"Epoch {epoch}")
+        train_progress_bar = tqdm(self.dataloader, desc = f"Epoch {epoch + 1}")
 
         for batch_index, images in enumerate(train_progress_bar):
             images = images.float().to(self.device)
@@ -136,8 +136,8 @@ class ModelTrainer:
                 generated = generated.permute(1, 2, 0).cpu().detach().numpy()
                 
             im = Image.fromarray(generated.astype(np.uint8))
-            fname = f"fake_{index}.jpg"
-            im.save(os.path.join(where_to, fname))
+            fname = os.path.join(where_to, f"fake_{index}.jpg")
+            im.save(fname)
             filenames.append(fname)
 
         df = pd.DataFrame()
