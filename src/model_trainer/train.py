@@ -2,6 +2,7 @@ import torch, torchvision
 import logging, time, sys, os
 sys.path.append("../..")
 import numpy as np
+import pandas as pd
 from loader import Galaxy10Dataset
 from src.model.discriminator import Discriminator
 from src.model.generator import Generator
@@ -126,6 +127,7 @@ class ModelTrainer:
         logging.info(f"The training procedure took {(training_end_time - training_start_time) / 60} minutes")
 
     def save_result_for_eval(self, num_infer, where_to):
+        filenames = []
         for index in tqdm(range(num_infer), desc = "Infering for evaluation"):
             with torch.no_grad():
                 noise = torch.randn(1, self.CONFIG["latent_dim"], 1, 1, device = self.device)
@@ -134,7 +136,13 @@ class ModelTrainer:
                 generated = generated.permute(1, 2, 0).cpu().detach().numpy()
                 
             im = Image.fromarray(generated.astype(np.uint8))
-            im.save(os.path.join(where_to, f"fake_{index}.jpg"))
+            fname = f"fake_{index}.jpg"
+            im.save(os.path.join(where_to, fname))
+            filenames.append(fname)
+
+        df = pd.DataFrame()
+        df["path"] = filenames
+        df.to_csv(os.path.join(where_to, "fake_data.csv"), index = False)
 
 
 

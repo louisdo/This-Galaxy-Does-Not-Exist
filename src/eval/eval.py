@@ -1,14 +1,15 @@
-import json, torch
+import json, torch, sys
+sys.path.append("..")
 import pandas as pd
 import numpy as np
 import torchvision.transforms as transforms
 from PIL import Image
-from inception import InceptionV3
+from .inception import InceptionV3
 from torch.utils.data import Dataset, DataLoader
 from torch.nn.functional import adaptive_avg_pool2d
 from tqdm import tqdm
 from scipy import linalg
-from model_trainer.loader import Galaxy10Dataset
+from ..model_trainer.loader import Galaxy10Dataset
 
 
 class EvalDataset(Dataset):
