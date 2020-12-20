@@ -5,6 +5,7 @@ from tqdm import tqdm
 from torch.utils.data import Dataset, DataLoader
 from astroNN.datasets import galaxy10
 from torchvision import transforms
+from PIL import Image
 
 
 class Galaxy10Dataset(Dataset):
@@ -12,14 +13,14 @@ class Galaxy10Dataset(Dataset):
         # This will download the data at the first time being run
         images, _ = galaxy10.load_data()
 
-        images = images.astype(np.float32)
+        self.images = images.astype(np.float32)
 
         # The mean and std is from imagenet
         mean = [123.675, 116.28 , 103.53]
         std = [58.395, 57.12 , 57.375]
-        self.transform = transforms.Compose([transforms.Resize(imsize),
-                                             transforms.ToTensor(),
-                                             transforms.Normalize(mean=mean, std=std)])
+        self.transform = transforms.Compose([transforms.ToTensor(),
+                                             transforms.Normalize(mean=mean, std=std),
+                                             transforms.Resize(imsize)])
 
 
 
@@ -40,4 +41,5 @@ class Galaxy10Dataset(Dataset):
 
 
     def __getitem__(self, index) -> "torch.tensor":
-        return self.transform(self.images[index])
+        img = self.images[index]
+        return self.transform(img)
