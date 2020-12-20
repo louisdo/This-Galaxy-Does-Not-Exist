@@ -130,7 +130,7 @@ class ModelTrainer:
                 noise = torch.randn(1, self.CONFIG["latent_dim"], 1, 1, device = self.device)
                 generated = self.generator(noise).detach().cpu()
                 generated = torchvision.utils.make_grid(generated, padding=2, normalize=True)
-                generated = generated.permute(1, 2, 0).data.numpy()
+                generated = generated.permute(1, 2, 0).cpu().detach().numpy()
             im = Image.fromarray(generated)
             im.save(os.path.join(where_to, f"fake_{index}.jpg"))
 
