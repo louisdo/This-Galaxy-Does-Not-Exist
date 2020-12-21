@@ -71,8 +71,8 @@ class ModelTrainer:
 
         for batch_index, images in enumerate(train_progress_bar):
             images = images.float().to(self.device)
-            labels = torch.ones((images.size(0), )).float().to(self.device)
-            fake_labels = torch.zeros((images.size(0), )).float().to(self.device)
+            labels = torch.ones((images.size(0), )).float().to(self.device) * 0.9
+            fake_labels = torch.ones((images.size(0), )).float().to(self.device) * 0.1
 
             # randomly generate noise, this will be the input of the
             # generator
