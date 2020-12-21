@@ -53,9 +53,11 @@ class ModelTrainer:
 
 
     def _save_generator_output(self):
+        self.generator.eval()
         with torch.no_grad():
             generated = self.generator(self.fixed_noise).detach().cpu()
         self.image_list.append(torchvision.utils.make_grid(generated, padding=2, normalize=True))
+        self.generator.train()
 
 
     def train_one_epoch(self, epoch: int):
@@ -63,6 +65,9 @@ class ModelTrainer:
         eval_interval = self.CONFIG["eval_interval"]
 
         train_progress_bar = tqdm(self.dataloader, desc = f"Epoch {epoch + 1}")
+
+        self.generator.train()
+        self.discriminator.train()
 
         for batch_index, images in enumerate(train_progress_bar):
             images = images.float().to(self.device)
@@ -128,6 +133,7 @@ class ModelTrainer:
 
     def save_result_for_eval(self, num_infer, where_to):
         filenames = []
+        self.generator.eval()
         for index in tqdm(range(num_infer), desc = "Infering for evaluation"):
             with torch.no_grad():
                 noise = torch.randn(1, self.CONFIG["latent_dim"], 1, 1, device = self.device)
