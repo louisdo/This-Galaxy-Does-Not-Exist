@@ -23,17 +23,14 @@ class Discriminator(nn.Module):
             # state size. (image_size*4) x 8 x 8
             nn.Conv2d(image_size * 4, image_size * 8, 4, 2, 1, bias=False),
             nn.BatchNorm2d(image_size * 8),
-            nn.LeakyReLU(0.2, inplace=True),
-            # state size. (image_size*8) x 4 x 4
-            nn.Conv2d(image_size * 8, 1, 4, 1, 0, bias=False),
-            nn.Sigmoid()
+            nn.LeakyReLU(0.2, inplace=True)
         )
 
-        self.real_fake_classifier = torch.nn.Sequential(
+        self.real_fake_classifier = nn.Sequential(
             nn.Conv2d(image_size * 8, 1, 4, 1, 0, bias=False),
             nn.Sigmoid()
         )
-        self.label_classifier = torch.nn.Sequential(
+        self.label_classifier = nn.Sequential(
             nn.Conv2d(image_size * 8, num_classes, 4, 1, 0, bias=False)
         )
 

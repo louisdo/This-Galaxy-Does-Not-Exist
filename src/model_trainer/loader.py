@@ -1,5 +1,5 @@
 """This file contains the dataloader"""
-import cv2
+import cv2, torch
 import numpy as np
 from tqdm import tqdm
 from torch.utils.data import Dataset, DataLoader
@@ -14,7 +14,7 @@ class Galaxy10Dataset(Dataset):
         images, labels = galaxy10.load_data()
 
         self.images = images.astype(np.float32)
-        self.labels = labels.astype(np.float32)
+        self.labels = labels.astype(np.int)
 
         # The mean and std is from imagenet
         mean = [123.675, 116.28 , 103.53]
@@ -30,5 +30,5 @@ class Galaxy10Dataset(Dataset):
 
     def __getitem__(self, index) -> "torch.tensor":
         img = self.images[index]
-        labels = self.labels[index]
+        labels = np.array(self.labels[index])
         return self.transform(img), torch.from_numpy(labels)

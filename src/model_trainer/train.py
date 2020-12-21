@@ -86,9 +86,9 @@ class ModelTrainer:
             self.discriminator.zero_grad()
             discriminator_output, pred_labels = self.discriminator(images, True)
             discriminator_output = discriminator_output.view(-1)
-            pred_labels = pred_labels.view(-1)
+            pred_labels = pred_labels.reshape(pred_labels.shape[:2])
 
-            discriminator_loss = self.criterion(discriminator_output, labels) + self.classification_criterion(pred_labels, cls_labels)
+            discriminator_loss = self.criterion(discriminator_output, labels) + self.classification_criterion(pred_labels, cls_labels.long())
             discriminator_loss.backward()
 
             discriminator_output_for_fake_images = self.discriminator(generated_images.detach()).view(-1)
