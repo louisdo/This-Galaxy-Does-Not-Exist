@@ -38,6 +38,7 @@ class ModelTrainer:
                                                       num_workers = self.CONFIG["workers"])
 
         self.criterion = torch.nn.BCELoss()
+        self.classification_criterion = torch.nn.CrossEntropyLoss()
 
         self.discriminator_optimizer = torch.optim.Adam(self.discriminator.parameters(), 
                                                         lr=self.CONFIG["learning_rate"], 
@@ -67,8 +68,9 @@ class ModelTrainer:
         self.generator.train()
         self.discriminator.train()
 
-        for batch_index, images in enumerate(train_progress_bar):
+        for batch_index, (images, cls_labels) in enumerate(train_progress_bar):
             images = images.float().to(self.device)
+            cls_labels = cls_labels.float().to(self.device)
             labels = torch.ones((images.size(0), )).float().to(self.device) * 0.9
             fake_labels = torch.ones((images.size(0), )).float().to(self.device) * 0.1
 
@@ -82,9 +84,11 @@ class ModelTrainer:
 
             # The first part is to update the discriminator
             self.discriminator.zero_grad()
-            discriminator_output = self.discriminator(images).view(-1)
+            discriminator_output, pred_labels = self.discriminator(images, True)
+            discriminator_output = discriminator_output.view(-1)
+            pred_labels = pred_labels.view(-1)
 
-            discriminator_loss = self.criterion(discriminator_output, labels)
+            discriminator_loss = self.criterion(discriminator_output, labels) + self.classification_criterion(pred_labels, cls_labels)
             discriminator_loss.backward()
 
             discriminator_output_for_fake_images = self.discriminator(generated_images.detach()).view(-1)

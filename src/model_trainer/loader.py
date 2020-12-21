@@ -11,9 +11,10 @@ from PIL import Image
 class Galaxy10Dataset(Dataset):
     def __init__(self, imsize: int = 64) -> None:
         # This will download the data at the first time being run
-        images, _ = galaxy10.load_data()
+        images, labels = galaxy10.load_data()
 
         self.images = images.astype(np.float32)
+        self.labels = labels.astype(np.float32)
 
         # The mean and std is from imagenet
         mean = [123.675, 116.28 , 103.53]
@@ -21,19 +22,6 @@ class Galaxy10Dataset(Dataset):
         self.transform = transforms.Compose([transforms.ToTensor(),
                                              transforms.Normalize(mean=mean, std=std),
                                              transforms.Resize(imsize)])
-
-
-
-    def _resize_array_of_images(self, images: np.array, shapes: list) -> np.array:
-        height, width, channels = shapes
-        resized_images = np.zeros((len(images), height, width, channels))
-
-        for index in tqdm(range(len(images)), desc = "Resizing the images"):
-            image = images[index]
-            resized_image = cv2.resize(image, (height, width))
-            resized_images[index] += resized_image
-
-        return resized_images
         
 
     def __len__(self) -> int:
@@ -42,4 +30,5 @@ class Galaxy10Dataset(Dataset):
 
     def __getitem__(self, index) -> "torch.tensor":
         img = self.images[index]
-        return self.transform(img)
+        labels = self.labels[index]
+        return self.transform(img), torch.from_numpy(labels)

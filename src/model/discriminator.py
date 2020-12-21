@@ -4,6 +4,7 @@ class Discriminator(nn.Module):
     def __init__(self, 
                  number_channel=3, 
                  image_size=64,
+                 num_classes = 10,
                  ngpu = False):
         super(Discriminator, self).__init__()
         self.ngpu = ngpu
@@ -28,10 +29,20 @@ class Discriminator(nn.Module):
             nn.Sigmoid()
         )
 
-    def forward(self, inp):
-        if inp.is_cuda and self.ngpu > 1:
-            output = nn.parallel.data_parallel(self.main, inp, range(self.ngpu))
-        else:
-            output = self.main(inp)
+        self.real_fake_classifier = torch.nn.Sequential(
+            nn.Conv2d(image_size * 8, 1, 4, 1, 0, bias=False),
+            nn.Sigmoid()
+        )
+        self.label_classifier = torch.nn.Sequential(
+            nn.Conv2d(image_size * 8, num_classes, 4, 1, 0, bias=False)
+        )
 
-        return output
+    def forward(self, inp, classify = False):
+        if inp.is_cuda and self.ngpu > 1:
+            feature = nn.parallel.data_parallel(self.main, inp, range(self.ngpu))
+        else:
+            feature = self.main(inp)
+
+        if classify:
+            return self.real_fake_classifier(feature), self.label_classifier(feature)
+        return self.real_fake_classifier(feature)
