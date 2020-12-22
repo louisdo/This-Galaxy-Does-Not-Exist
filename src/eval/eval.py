@@ -96,8 +96,8 @@ class Evaluation:
 
         train_pbar = tqdm(loader, desc = f"Evaluation for {which} data")
         for batch_idx, data in enumerate(train_pbar):
-            if which == "real": batch = data.to(self.device)
-            else: batch = data[0].to(device)
+            if which == "fake": batch = data.to(self.device)
+            else: batch = data[0].to(self.device)
 
             with torch.no_grad():
                 pred = self.model(batch)[0]
