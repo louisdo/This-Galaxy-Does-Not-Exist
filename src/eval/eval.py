@@ -95,8 +95,9 @@ class Evaluation:
         pred_arr = np.empty((len(loader.dataset), self.dims))
 
         train_pbar = tqdm(loader, desc = f"Evaluation for {which} data")
-        for batch_idx, batch in enumerate(train_pbar):
-            batch = batch.to(self.device)
+        for batch_idx, data in enumerate(train_pbar):
+            if which == "real": batch = data.to(self.device)
+            else: batch = data[0].to(device)
 
             with torch.no_grad():
                 pred = self.model(batch)[0]
