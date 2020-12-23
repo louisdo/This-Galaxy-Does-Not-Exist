@@ -21,8 +21,7 @@ class EvalDataset(Dataset):
         std = [0.229, 0.224, 0.225]
         input_shape = 299
 
-        self.transform = transforms.Compose([transforms.Resize(int(input_shape*1.15)),
-                                            transforms.CenterCrop(input_shape),
+        self.transform = transforms.Compose([transforms.CenterCrop(input_shape),
                                             transforms.ToTensor(),
                                             transforms.Normalize(mean=mean, std=std)])
 
