@@ -4,3 +4,4 @@ tqdm
 astroNN
 numpy
 opencv-python
+PyYAML
