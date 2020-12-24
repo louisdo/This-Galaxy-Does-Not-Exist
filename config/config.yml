@@ -1,10 +1,10 @@
 train:
   image_size: 64
-  batch_size: 64
+  batch_size: 128
   device: "cuda"
-  latent_dim: 128
+  latent_dim: 32
   number_channel: 3
   learning_rate: 0.0002
-  eval_interval: 50
+  eval_interval: 100
   num_epochs: 10
   workers: 1

@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import torchvision.transforms as transforms
 from PIL import Image
+from argparse import ArgumentParser
 from .inception import InceptionV3
 from torch.utils.data import Dataset, DataLoader
 from torch.nn.functional import adaptive_avg_pool2d
@@ -21,8 +22,7 @@ class EvalDataset(Dataset):
         std = [0.229, 0.224, 0.225]
         input_shape = 299
 
-        self.transform = transforms.Compose([transforms.Resize(int(input_shape*1.15)),
-                                            transforms.CenterCrop(input_shape),
+        self.transform = transforms.Compose([transforms.CenterCrop(input_shape),
                                             transforms.ToTensor(),
                                             transforms.Normalize(mean=mean, std=std)])
 
@@ -161,3 +161,13 @@ class Evaluation:
         score = self.calculate_frechet_distance(mean_real, cov_real, mean_fake, cov_fake)
 
         return score
+
+
+if __name__ == "__main__":
+    parser = ArgumentParser(description = "Start evaluation")
+    parser.add_argument("--eval_folder", help = "folder where the eval data is saved", required = True)
+    args = parser.parse_args()
+
+    evaluator = Evaluation(fake_data_path = os.path.join(args.eval_folder, "fake_data.csv"), device = torch.device("cuda"))
+    score = evaluator.fid_score()
+    print(f"FID score of the model is: {score}")

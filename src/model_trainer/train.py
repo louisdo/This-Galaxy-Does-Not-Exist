@@ -9,6 +9,7 @@ from src.model.generator import Generator
 from utils.utils import Utils
 from tqdm import tqdm
 from PIL import Image
+from argparse import ArgumentParser
 
 
 class ModelTrainer:
@@ -151,10 +152,23 @@ class ModelTrainer:
         df["path"] = filenames
         df.to_csv(os.path.join(where_to, "fake_data.csv"), index = False)
 
+    def save_checkpoint(self):
+        torch.save(self.generator.state_dict(), os.path.join(self.CONFIG["ckpt_folder"], "checkpoint.pth.tar"))
+        return True
 
 
 if __name__ == "__main__":
+    parser = ArgumentParser(description = "Model trainer")
+    parser.add_argument("--ckpt_folder", help = "path to save checkpoint", required = True)
+    parser.add_argument("--eval_folder", help = "folder to where the eval data will be saved", required = True)
+    args = parser.parse_args()
+
     CONFIG = Utils.get_config_yaml("../../config/config.yml")
     model_trainer = ModelTrainer(CONFIG = CONFIG)
 
     model_trainer.train()
+    model_trainer.save_result_for_eval(25000, args.eval_folder)
+
+    checkpoint_path = os.path.join(args.ckpt_folder, "checkpoint.pth.tar")
+    torch.save(model_trainer.generator.state_dict(), checkpoint_path)
+    print("Checkpoint saved")
