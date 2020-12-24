@@ -1,4 +1,6 @@
-import torch, torchvision
+import torch, torchvision, sys
+sys.path.append("../..")
+import numpy as np
 from generator import Generator
 from argparse import ArgumentParser
 from utils.utils import Utils
@@ -31,7 +33,7 @@ class Infer:
 if __name__ == "__main__":
     parser = ArgumentParser(description = "Model trainer")
     parser.add_argument("--ckpt_path", help = "Path to model checkpoint", required = True)
-    parser.add_argument("--num_images", help = "Number of images to infer", required = True)
+    parser.add_argument("--num_images", help = "Number of images to infer", type = int, required = True)
     parser.add_argument("--where_to", help = "Where to save the inference result", required = True)
     args = parser.parse_args()
 
@@ -41,6 +43,6 @@ if __name__ == "__main__":
 
     infer_res = infer(args.num_images)
     infer_res = (infer_res.permute(1, 2, 0) * 255).int()
-    infer_res = Image.fromarray(infer_res)
+    infer_res = Image.fromarray(infer_res.data.numpy().astype(np.uint8))
 
     infer_res.save(args.where_to)
