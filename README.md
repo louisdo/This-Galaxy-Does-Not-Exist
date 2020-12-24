@@ -1,5 +1,6 @@
 # This Galaxy Does Not Exist
 This project serves as the Capstone project for the course Introduction to Machine Learning and Data Mining
+
 ![Alt text](img/result.jpg "Some non-existent galaxies")
 
 # Usage tutorial
