@@ -1,10 +1,12 @@
 # This Galaxy Does Not Exist
 This project serves as the Capstone project for the course Introduction to Machine Learning and Data Mining
+![Alt text](img/result.jpg "Some non-existent galaxies")
 
 # Usage tutorial
 First you would need to clone the code
 ```bash
-
+git clone --single-branch --branch final https://github.com/louisdo/This-Galaxy-Does-Not-Exist.git
+pip install -r This-Galaxy-Does-Not-Exist/requirements.txt
 ```
 
 To train the model
