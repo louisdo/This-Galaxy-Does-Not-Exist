@@ -4,4 +4,4 @@ tqdm
 astroNN
 numpy
 opencv-python
-PyYAML >= 5.1
+PyYAML
