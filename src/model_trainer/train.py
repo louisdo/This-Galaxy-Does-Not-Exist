@@ -26,14 +26,16 @@ class ModelTrainer:
                                            image_size = self.CONFIG["image_size"],
                                            num_classes = NUM_CLASSES[self.CONFIG["input"]],
                                            ngpu = False)
-
+        if os.path.exists(self.CONFIG["resume_dis_ckpt"]): 
+            self.discriminator.load_state_dict(torch.load(self.CONFIG["resume_dis_ckpt"]))
         self.discriminator = self.discriminator.to(self.device)
 
         self.generator = Generator(latent_dim = self.CONFIG["latent_dim"],
                                    number_channel = 3,
                                    image_size = self.CONFIG["image_size"],
                                    ngpu = False)
-
+        if os.path.exists(self.CONFIG["resume_gen_ckpt"]): 
+            self.generator.load_state_dict(torch.load(self.CONFIG["resume_gen_ckpt"]))
         self.generator = self.generator.to(self.device)
 
         if self.CONFIG["input"] == "galaxy": dataset = Galaxy10Dataset(imsize = self.CONFIG["image_size"])

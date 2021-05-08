@@ -11,3 +11,5 @@ train:
   data_folder: ""
   labels_file:
   input: "car"
+  resume_gen_ckpt: ""
+  resume_dis_ckpt: ""
