@@ -3,7 +3,7 @@ import logging, time, sys, os
 sys.path.append("../..")
 import numpy as np
 import pandas as pd
-from loader import Galaxy10Dataset
+from loader import Galaxy10Dataset, StanfordCarDataset
 from src.model.discriminator import Discriminator
 from src.model.generator import Generator
 from utils.utils import Utils
@@ -18,8 +18,13 @@ class ModelTrainer:
         self.CONFIG = CONFIG["train"]
         self.device = torch.device(self.CONFIG["device"])
 
+        NUM_CLASSES = {
+            "car": 196,
+            "galaxy": 10
+        }
         self.discriminator = Discriminator(number_channel = 3,
                                            image_size = self.CONFIG["image_size"],
+                                           num_classes = NUM_CLASSES[self.CONFIG["input"]],
                                            ngpu = False)
 
         self.discriminator = self.discriminator.to(self.device)
@@ -31,7 +36,10 @@ class ModelTrainer:
 
         self.generator = self.generator.to(self.device)
 
-        dataset = Galaxy10Dataset(imsize = self.CONFIG["image_size"])
+        if self.CONFIG["input"] == "galaxy": dataset = Galaxy10Dataset(imsize = self.CONFIG["image_size"])
+        elif self.CONFIG["input"] = "car": dataset = StanfordCarDataset(data_folder = self.CONFIG["data_folder"],
+                                                                        labels_file = self.CONFIG["labels_file"],
+                                                                        imsize = self.CONFIG["image_size"])
 
         self.dataloader = torch.utils.data.DataLoader(dataset, 
                                                       batch_size = self.CONFIG["batch_size"],

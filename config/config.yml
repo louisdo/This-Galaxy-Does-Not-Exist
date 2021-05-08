@@ -8,3 +8,6 @@ train:
   eval_interval: 100
   num_epochs: 10
   workers: 1
+  data_folder: ""
+  labels_file:
+  input: "car"
