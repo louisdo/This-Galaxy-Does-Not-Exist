@@ -18,8 +18,8 @@ class Galaxy10Dataset(Dataset):
         self.labels = labels.astype(np.int)
 
         # The mean and std is from imagenet
-        mean = [123.675, 116.28 , 103.53]
-        std = [58.395, 57.12 , 57.375]
+        mean = [0,0,0]
+        std = [1,1,1]
         self.transform = transforms.Compose([transforms.ToTensor(),
                                              transforms.Normalize(mean=mean, std=std),
                                              transforms.Resize(imsize)])
@@ -46,11 +46,13 @@ class StanfordCarDataset(Dataset):
         self.labels = {os.path.join(data_folder, mat_file[index][-1].item()) : mat_file[index][-2].item() - 1 for index in range(len(mat_file))}
 
         # The mean and std is from imagenet
-        mean = [123.675, 116.28 , 103.53]
-        std = [58.395, 57.12 , 57.375]
+        mean = [0,0,0]
+        std = [1,1,1]
         self.transform = transforms.Compose([transforms.ToTensor(),
-                                             transforms.Normalize(mean=mean, std=std),
-                                             transforms.Resize((imsize, imsize))])
+                                             transforms.Resize((imsize, imsize)),
+                                             transforms.Normalize(mean=mean, std=std)])
+
+        self.ERROR_COUNT = 0
 
     def load_image(self, im_file):
         return Image.open(im_file)
@@ -59,6 +61,12 @@ class StanfordCarDataset(Dataset):
         return len(self.im_files)
 
     def __getitem__(self, index) -> ("torch.tensor", "torch.tensor"):
+        if self.ERROR_COUNT > 20: raise Exception("DataLoader causes error 20 times continuously!")
         img = self.load_image(self.im_files[index])
         label = self.labels[self.im_files[index]]
-        return self.transform(img), torch.tensor(label)
+        try:
+            self.ERROR = 0
+            return self.transform(img), torch.tensor(label)
+        except:
+            self.ERROR_COUNT += 1
+            return self.__getitem__(index + 1)
