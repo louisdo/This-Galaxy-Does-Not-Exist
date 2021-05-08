@@ -29,7 +29,7 @@ class Galaxy10Dataset(Dataset):
         return len(self.images)
 
 
-    def __getitem__(self, index) -> "torch.tensor", "torch.tensor":
+    def __getitem__(self, index) -> ("torch.tensor", "torch.tensor"):
         img = self.images[index]
         labels = np.array(self.labels[index])
         return self.transform(img), torch.from_numpy(labels)
@@ -63,7 +63,7 @@ class StanfordCarDataset(Dataset):
     def __len__(self) -> int:
         return len(self.im_files)
 
-    def __getitem__(self, index) -> "torch.tensor", "torch.tensor":
+    def __getitem__(self, index) -> ("torch.tensor", "torch.tensor"):
         img = self.load_image(self.im_files[index])
         label = self.generate_one_hot_label(self.labels[self.im_files[index]])
         return self.transform(img), torch.from_numpy(label)

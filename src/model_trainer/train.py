@@ -37,7 +37,7 @@ class ModelTrainer:
         self.generator = self.generator.to(self.device)
 
         if self.CONFIG["input"] == "galaxy": dataset = Galaxy10Dataset(imsize = self.CONFIG["image_size"])
-        elif self.CONFIG["input"] = "car": dataset = StanfordCarDataset(data_folder = self.CONFIG["data_folder"],
+        elif self.CONFIG["input"] == "car": dataset = StanfordCarDataset(data_folder = self.CONFIG["data_folder"],
                                                                         labels_file = self.CONFIG["labels_file"],
                                                                         imsize = self.CONFIG["image_size"])
 
