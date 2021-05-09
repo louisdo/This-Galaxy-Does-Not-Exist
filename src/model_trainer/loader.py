@@ -30,7 +30,7 @@ class Galaxy10Dataset(Dataset):
 
 
     def __getitem__(self, index) -> ("torch.tensor", "torch.tensor"):
-        img = Image.open(self.images[index].astype(np.uint8))
+        img = Image.fromarray(self.images[index].astype(np.uint8))
         labels = np.array(self.labels[index])
         return self.transform(img), torch.from_numpy(labels)
 
