@@ -18,13 +18,11 @@ class EvalDataset(Dataset):
         self.data = pd.read_csv(data_path)
         assert "path" in self.data.columns
 
-        mean = [0.485, 0.456, 0.406]
-        std = [0.229, 0.224, 0.225]
-        input_shape = 299
-
-        self.transform = transforms.Compose([transforms.CenterCrop(input_shape),
-                                            transforms.ToTensor(),
-                                            transforms.Normalize(mean=mean, std=std)])
+        mean = [0,0,0]
+        std = [1,1,1]
+        self.transform = transforms.Compose([transforms.ToTensor(),
+                                             transforms.Normalize(mean=mean, std=std),
+                                             transforms.Resize(64)])
 
 
     @staticmethod
@@ -62,7 +60,7 @@ class Evaluation:
     def __init__(self, 
                  fake_data_path: str,
                  device: torch.device):
-        real_dataset = Galaxy10Dataset(imsize = 299)
+        real_dataset = Galaxy10Dataset(imsize = 64)
         fake_dataset = EvalDataset(data_path = fake_data_path)
 
         self.real_dataloader = DataLoader(real_dataset,
