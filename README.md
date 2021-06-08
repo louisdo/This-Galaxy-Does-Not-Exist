@@ -1,4 +1,4 @@
-# This Galaxy Does Not Exist
+# This Car Does Not Exist
 This project serves as the Capstone project for the course Deep Learning and Applications
 
 ![Alt text](cls_TCDNE_results_final.png "Some non-existent galaxies")
