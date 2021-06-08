@@ -1,5 +1,5 @@
 # This Galaxy Does Not Exist
-This project serves as the Capstone project for the course Introduction to Machine Learning and Data Mining
+This project serves as the Capstone project for the course Deep Learning and Applications
 
 ![Alt text](cls_TCDNE_results_final.png "Some non-existent galaxies")
 
