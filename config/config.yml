@@ -2,7 +2,7 @@ train:
   image_size: 64
   batch_size: 128
   device: "cuda"
-  latent_dim: 32
+  latent_dim: 128
   number_channel: 3
   learning_rate: 0.0002
   eval_interval: 100
@@ -10,6 +10,6 @@ train:
   workers: 1
   data_folder: ""
   labels_file:
-  input: "car"
+  input: "galaxy"
   resume_gen_ckpt: ""
   resume_dis_ckpt: ""
